@@ -26,5 +26,10 @@ export async function postMusicOnDb(){
         name: 'Hino do flamengo',
         youtubeLink: 'https://www.youtube.com/watch?v=vpdFip3Es0o'
     }
-    await prisma.recommendation.create({data: music})
+    const response = await prisma.recommendation.create({data: music})
+    return response
+}
+
+export async function searchMusic(youtubeLink) {
+    return await prisma.recommendation.findFirst({where: {youtubeLink}})
 }
