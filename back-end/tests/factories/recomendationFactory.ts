@@ -30,6 +30,14 @@ export async function postMusicOnDb(){
     return response
 }
 
-export async function searchMusic(youtubeLink) {
+export async function searchMusic(youtubeLink: any) {
     return await prisma.recommendation.findFirst({where: {youtubeLink}})
+}
+
+export async function insert3MusicOnDb(){
+    await prisma.recommendation.createMany({data: [
+        {name: 'Rewrite the stars', youtubeLink: 'https://www.youtube.com/watch?v=yO28Z5_Eyls'},
+        {name: 'Never enough', youtubeLink: 'https://www.youtube.com/watch?v=GLK-mr8JmNY'},
+        {name: 'From now on', youtubeLink: 'https://www.youtube.com/watch?v=XyIDxpUJ10Q'}
+    ]})
 }

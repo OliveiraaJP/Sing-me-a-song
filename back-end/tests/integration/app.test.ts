@@ -79,7 +79,20 @@ describe('POST/:id/', () => {
         const music = await recommendationFactory.searchMusic(response.body.youtubeLink)
         expect(music.score).toBe(-1)
     })
+
+    it("given invalid id, should return 404", async () => {
+        const response = await supertest(app).post(`/recommendations/17/downvote`);
+    
+        expect(response.status).toBe(404);
+      });
 })
+
+describe('GET/top/:amount', () => {
+    it("get top3 songs",async () => {
+        await recommendationFactory.insert3MusicOnDb()
+    })
+})
+
 
 afterAll(async () => {
     await prisma.$executeRaw`TRUNCATE TABLE recommendations`
