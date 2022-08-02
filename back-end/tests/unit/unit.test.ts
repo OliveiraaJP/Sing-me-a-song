@@ -113,4 +113,87 @@ describe("insert recommendations", () => {
       expect(recommendationRepository.updateScore).toBeCalled();
       expect(recommendationRepository.remove).not.toBeCalled();
     })
+
+    it("upvote invalid id", async () => {
+      jest.spyOn(recommendationRepository, "find").mockResolvedValueOnce(null);
+  
+      expect(recommendationService.upvote(100)).rejects.toEqual({
+        type: "not_found",
+        message: "",
+      });
+    });
+      it("downvote invalid id", async () => {
+        jest.spyOn(recommendationRepository, "find").mockResolvedValueOnce(null);
+    
+        expect(recommendationService.upvote(100)).rejects.toEqual({
+          type: "not_found",
+          message: "",
+        });
+      });
+    
+  });
+
+  describe('get recommendations', () => {
+    it("get all recommendations", async () => {
+      const recommendations = [
+        {
+          id: 1,
+          name: faker.lorem.words(4),
+          youtubeLink: "https://www.youtube.com/watch?v=0ryTahSnQlc&list=RD0ryTahSnQlc&index=1",
+          score: 5,
+        },
+        {
+          id: 2,
+          name: faker.lorem.words(5),
+          youtubeLink: "https://www.youtube.com/watch?v=0ryTahSnQlc&list=RD0ryTahSnQlc&index=1",
+          score: 10,
+        },
+        {
+          id: 3,
+          name: faker.lorem.words(6),
+          youtubeLink: "https://www.youtube.com/watch?v=0ryTahSnQlc&list=RD0ryTahSnQlc&index=1",
+          score: 124,
+        },
+      ];
+      const findAll = jest
+        .spyOn(recommendationRepository, "findAll")
+        .mockResolvedValueOnce(recommendations);
+  
+      await recommendationService.get();
+      expect(findAll).toBeCalledTimes(1);
+    });
+
+    it("get top recommendations", async () => {
+      const getAmountByScore = jest
+        .spyOn(recommendationRepository, "getAmountByScore")
+        .mockResolvedValueOnce([]);
+  
+      await recommendationService.getTop(0);
+      expect(getAmountByScore).toBeCalledTimes(1);
+    });
+  
+    it("get random recommendation - 30%", async () => {
+      const recommendations = [
+        {
+          id: 1,
+          name: faker.lorem.words(3),
+          youtubeLink: "https://www.youtube.com/watch?v=W3fEUlr6XTo",
+          score: 5,
+        },
+        {
+          id: 2,
+          name: faker.lorem.words(3),
+          youtubeLink: "https://www.youtube.com/watch?v=W3fEUlr6XTo",
+          score: 100,
+        },
+      ];
+      jest.spyOn(Math, "random").mockReturnValueOnce(0.9);
+      jest
+        .spyOn(recommendationRepository, "findAll")
+        .mockResolvedValueOnce([recommendations[0]]);
+  
+      const result = await recommendationService.getRandom();
+      expect(result.score).toEqual(recommendations[0].score);
+    });
   })
+  
